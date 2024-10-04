@@ -1,0 +1,24 @@
+name: Sync with Veracode GitHub Actions Integration Repository
+
+on:
+  schedule:
+    - cron: 0 21 * * *  # runs daily between 9am and 11:59am
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Set a Delay
+        run: sleep $(( RANDOM % 120 ))  # generates a random number between 0 and 120
+      - name: Dispatch Sync Event
+        uses: actions/github-script@v5
+        with:
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'sync-veracode-repo',
+            });
